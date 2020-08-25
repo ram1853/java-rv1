@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+      
+      <!-- Only Spring Boot will have the default login page,
+      For Spring MVC we have to define explicitly -->
+      
+      <!-- Spring security is completely configured in this xml -->
+      
+      <!-- Below is for authentication -->
+      <authentication-manager>
+      
+      	<!-- authentication from database -->
+        <authentication-provider>
+            <jdbc-user-service data-source-ref="dataSource" 
+                users-by-username-query="select username,password, enabled from users where username=?"
+                authorities-by-username-query="select username, authority from authorities where username=?" />
+        </authentication-provider>
+      
+      </authentication-manager>
+      
+      <!-- Below is for authorization -->
+      <!-- Every authorization defined is based on controllers -->
+      <!-- To use expressions to secure individual URLs, 
+      you would first need to set the use-expressions attribute in the <http> element to true. -->
+      <http use-expressions="true">
+      <csrf disabled="true"/> <!-- This csrf disabling needs more investigation, if this is not provided the POST methods will
+      							   not be invoked -->
+      
+	 <intercept-url pattern="/dgods/home" access="permitAll()" /> 
+	 <intercept-url pattern="/dgods/showAllMembers" access="permitAll()" /> 
+	 <intercept-url pattern="/dgods/viewMember" access="permitAll()" /> 
+	 <intercept-url pattern="/dgods/showAddMemberPage" access="hasRole('ROLE_DGODS_ADMIN')" />
+	 <intercept-url pattern="/dgods/addOrUpdateMember" access="hasRole('ROLE_DGODS_ADMIN')" />
+	 <intercept-url pattern="/dgods/showUpdateMemberPage" access="hasRole('ROLE_DGODS_ADMIN')" />
+	 <intercept-url pattern="/dgods/deleteMember" access="hasRole('ROLE_DGODS_ADMIN')" />
+            
+     <access-denied-handler error-page="/dgods/403" /> <!-- When authorization fails, this controller will be called -->
+           
+           <!-- 
+            loginProcessingUrl() – the url to submit the username and password to -> No need to write any code logics,
+            just make sure the value mentioned is the same as in 'action' of login page
+			defaultSuccessUrl() – the landing page after a successful login -> basically goes through the controller (hence 
+			authorization will be performed midway - "/dgods/home" is the controller used here)
+			failureUrl() – the landing page after an unsuccessful login
+            -->
+            
+            <!-- The below will perform the job of authenticating the user - checking the credentials alone
+            These credentials are validated from database with the help of authentication-manager above
+            Once sucessfully authenticated, authorization will be done from the above intercept-url
+             -->
+            
+         <form-login login-processing-url="/processLogin" 
+            default-target-url="/dgods/home" always-use-default-target="false"
+            authentication-failure-url="/dgods/login?error=true"
+            username-parameter="username"
+            password-parameter="password" />
+ 
+        <logout logout-url="/logout" logout-success-url="/login"
+            delete-cookies="JSESSIONID" invalidate-session="true" />
+        
+      
+      </http>
+      
+</beans:beans>

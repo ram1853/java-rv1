@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans.xsd
+    	http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context.xsd">
+  		
+  		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver" />	
+			
+			<!-- Localhost connection
+			
+			<property name="url" value="jdbc:mysql://localhost:3306/dgodsRegistryDb?useSSL=false" />
+			<property name="username" value="root"/>
+			<property name="password" value="root"/> -->
+			
+			<!-- Cloud connection to database -->
+			
+			<property name="url" value="jdbc:mysql://dgodsdb.cmrmy8fejd0c.us-east-2.rds.amazonaws.com:3306/dgodsregistry_aws_db?useSSL=false" />
+			<property name="username" value="admin"/>
+			<property name="password" value="login123"/>
+			
+			
+		</bean>
+
+</beans>
