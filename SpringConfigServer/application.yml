@@ -1,0 +1,6 @@
+sample:
+  message1: Hello World from spring cloud server!!
+  list:
+    message: One,Two,Three,Four
+  user:
+    data: "{name:'Mohith',age:'36',location:'Switzerland'}"
